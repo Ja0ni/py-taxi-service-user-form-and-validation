@@ -1,12 +1,16 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from taxi.models import Driver, Car
+from taxi.models import Car
+
+
+User = get_user_model()
 
 
 class DriverCreateForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
-        model = Driver
+        model = User
         fields = UserCreationForm.Meta.fields + (
             "first_name", "last_name", "license_number",
         )
@@ -14,16 +18,16 @@ class DriverCreateForm(UserCreationForm):
 
 class DriverLicenseUpdateForm(forms.ModelForm):
     class Meta(UserCreationForm.Meta):
-        model = Driver
+        model = User
         fields = ("license_number",)
 
 
 class CarCreateForm(forms.ModelForm):
     drivers = forms.ModelMultipleChoiceField(
-        queryset=Driver.objects.all(),
+        queryset=User.objects.all(),
         widget=forms.CheckboxSelectMultiple,
     )
 
-    class Meta(UserCreationForm.Meta):
+    class Meta(forms.ModelForm):
         model = Car
         fields = "__all__"
